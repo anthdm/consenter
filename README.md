@@ -47,7 +47,7 @@ node_two_1    | time="2018-05-08T11:47:15Z" level=info msg="receiving new tx: d9
 ```
 
 ### Example
-There is a [solo engine example](https://github.com/anthdm/consenter/pkg/consensus/solo) that should cover the idea and get you up to speed. 
+There is a [solo engine example](https://github.com/anthdm/consenter/blob/master/pkg/consensus/solo/engine.go) that should cover the idea and get you up to speed. 
 
 ### Todo
 - configuration
