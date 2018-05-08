@@ -58,6 +58,10 @@ type (
 		// its transport. It holds both the message and the peer.
 		protoCh chan messageTuple
 
+		// relayCh is used to communicate between the server and its underlying
+		// consensus engine.
+		relayCh chan *pb.Message
+
 		// RelayCache holds transaction hashes that this server already relayed
 		// to its peers.
 		relayCache *storage.MemStore
@@ -92,15 +96,21 @@ type (
 )
 
 // NewServer returns a new Server object.
-func NewServer(cfg ServerConfig) *Server {
-	return &Server{
+func NewServer(cfg ServerConfig, engine consensus.Engine) *Server {
+	s := &Server{
 		ServerConfig: cfg,
 		peers:        make(map[Peer]bool),
 		addPeer:      make(chan Peer),
 		delPeer:      make(chan peerDrop),
 		protoCh:      make(chan messageTuple),
 		relayCache:   storage.NewMemStore(),
+		relayCh:      make(chan *pb.Message),
 	}
+	if engine != nil {
+		s.engine = engine
+		s.engine.Configurate(s.relayCh, s.PrivateKey)
+	}
+	return s
 }
 
 // Start attempts to start running the server.
@@ -151,6 +161,8 @@ running:
 		select {
 		case <-s.quit:
 			break running
+		case msg := <-s.relayCh:
+			s.Relay(msg)
 		case t := <-s.protoCh:
 			if err := s.handleMessage(t.peer, t.msg); err != nil {
 				log.Warnf("failed processing message: %s", err)

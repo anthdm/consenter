@@ -8,6 +8,16 @@ import (
 	proto "github.com/golang/protobuf/proto"
 )
 
+// NewBlock will create a new block.
+func NewBlock(prevIndex uint32) *Block {
+	return &Block{
+		Header: &Header{
+			Index: prevIndex + 1,
+			Nonce: rand.Uint64(),
+		},
+	}
+}
+
 // NewTransaction will create a new random Transaction.
 func NewTransaction() *Transaction {
 	return &Transaction{

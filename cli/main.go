@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/anthdm/consenter/pkg/consensus"
+	"github.com/anthdm/consenter/pkg/consensus/solo"
 	"github.com/anthdm/consenter/pkg/network"
 	"github.com/urfave/cli"
 )
@@ -37,6 +39,7 @@ func newNodeCommand() cli.Command {
 			cli.StringFlag{Name: "seed"},
 			cli.BoolFlag{Name: "consensus"},
 			cli.StringFlag{Name: "privkey"},
+			cli.StringFlag{Name: "engine"},
 		},
 	}
 }
@@ -46,6 +49,7 @@ func startServer(ctx *cli.Context) error {
 		isConsensusNode = ctx.Bool("consensus")
 		privKey         *ecdsa.PrivateKey
 		err             error
+		engine          consensus.Engine
 	)
 	if isConsensusNode {
 		if len(ctx.String("privkey")) == 0 {
@@ -57,6 +61,16 @@ func startServer(ctx *cli.Context) error {
 		if err != nil {
 			return cli.NewExitError(err, 1)
 		}
+		if len(ctx.String("engine")) == 0 {
+			return cli.NewExitError("engine cannot be empty if running a consensus node", 1)
+		}
+		switch ctx.String("engine") {
+		case "solo":
+			// block generation 15 seconds.
+			engine = solo.NewEngine(15 * time.Second)
+		default:
+			return cli.NewExitError("invalid engine option", 1)
+		}
 	}
 	cfg := network.ServerConfig{
 		ListenAddr:     ctx.Int("tcp"),
@@ -65,7 +79,7 @@ func startServer(ctx *cli.Context) error {
 		Consensus:      isConsensusNode,
 		PrivateKey:     privKey,
 	}
-	srv := network.NewServer(cfg)
+	srv := network.NewServer(cfg, engine)
 	return cli.NewExitError(srv.Start(), 1)
 }
 

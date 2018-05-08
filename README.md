@@ -46,6 +46,9 @@ node_five_1   | time="2018-05-08T11:47:15Z" level=info msg="receiving new tx: 82
 node_two_1    | time="2018-05-08T11:47:15Z" level=info msg="receiving new tx: d9734e16b52b93254fb1aa190e6739dd802208384ff711da68f9f3a63959d585"
 ```
 
+### Example
+There is a [solo engine example](https://github.com/anthdm/consenter/pkg/consensus/solo) that should cover the idea and get you up to speed. 
+
 ### Todo
 - configuration
 - blockchain persistance 
