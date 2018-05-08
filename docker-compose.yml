@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  node_one:
+    build: .
+    ports:
+      - 3000:3000
+    command: "node -tcp 3000 -seed node_two:3001,node_three:3002,node_four:3003,node_five:3004"
+  node_two:
+    build: .
+    ports:
+      - 3001:3001
+    command: "node -tcp 3001 -seed node_three:3002,node_four:3003,node_five:3004"
+  node_three:
+    build: .
+    ports:
+      - 3002:3002
+    command: "node -tcp 3002 -seed node_four:3003,node_five:3004"
+  node_four:
+    build: .
+    ports:
+      - 3003:3003
+    command: "node -tcp 3003 -seed node_five:3004"
+  node_five:
+    build: .
+    ports:
+      - 3004:3004
+    command: "node -tcp 3004"
+
+

@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package message;
+
+enum Flag {
+    consensus = 0;
+    payload = 1;
+}
+
+message Message {
+    Flag flag = 1;
+    oneof Payload {
+        State state = 2;
+        PeerRequest peer_request = 3;
+        PeerResponse peer_response = 4;
+        Transaction transaction = 5;
+    }
+} 
+
+// State is used in the initial handshake.
+message State {
+    // unique peer identifier.
+    uint64 id = 1;
+    // port the peer is accepting connections on.
+    uint32 port = 2;
+}
+
+// PeerRequest requests known peers in the network.
+message PeerRequest {
+    // A list of already known peers in the network.
+    repeated string known = 1;
+}
+
+// PeerResponse contains a list of known peers responded after a PeerRequest is
+// send.
+message PeerResponse {
+    repeated Peer peers = 1;
+}
+
+// Peer holds information about a peer in the network. 
+message Peer {
+    string enpoint = 1;
+}
+
+// Header represents a very simple block header used for simulation.
+message Header {
+    // Index of the block.
+    uint32 index = 1;
+    // Nonce used to prevent hash collisions.
+    uint64 nonce = 2;
+}
+
+// Block represents a very simple Block used for simulation.
+message Block {
+    // Head of the block that also will be used for computing its hash.
+    Header header = 1;
+    // List of recorded transactions.
+    repeated Transaction transactions = 2;
+}
+
+// Transaction represents a very simple transaction used for simulation.
+message Transaction {
+    // Nonce used to prevent hash collisions.
+    uint64 nonce = 1;
+}
