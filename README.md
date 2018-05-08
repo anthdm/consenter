@@ -2,7 +2,7 @@
 A pluggable blockchain consensus simulation framework written in Go.
 
 ### What?
-Testing and benchmarking complex consensus algorithms in existing codebases can sometimes be a pain. Consenter is solving this problem by exposing a simple blockchain behind a p2p network where consensus engines can be easily plugged in and out. 
+Testing and benchmarking complex consensus algorithms in existing codebases can sometimes be a pain. Consenter is solving this problem by exposing a simple blockchain behind a p2p network where consensus engines can easily be plugged in and out. 
 
 ### How?
 The server is emiting transactions each N seconds that will be relayed through the network. Each engine implementation will receive those transactions, hence engines can than operate on those transactions according to their implementation. Messages can be quickly bootstrapped and implemented with `protobuf`.
